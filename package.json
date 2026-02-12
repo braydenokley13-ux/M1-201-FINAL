@@ -1,0 +1,19 @@
+{
+  "name": "front-office-city-m1",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check:syntax": "node scripts/syntax-check.mjs",
+    "check:todos": "node scripts/todo-audit.mjs"
+  },
+  "dependencies": {
+    "three": "^0.161.0"
+  },
+  "devDependencies": {
+    "vite": "^6.0.0"
+  }
+}

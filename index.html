@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Front Office City - District A Final</title>
+    <link rel="stylesheet" href="./src/styles/main.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.161.0/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three@0.161.0/examples/jsm/"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="world"></canvas>
+
+      <section id="hud" class="panel">
+        <h1>Front Office City</h1>
+        <p class="subtitle">District A Final - Cap Control Ops (Module 1)</p>
+
+        <div id="team-select" class="team-select">
+          <label for="team">Choose Team:</label>
+          <select id="team">
+            <option value="warriors">Golden State Warriors</option>
+            <option value="knicks">New York Knicks</option>
+          </select>
+          <label for="run-mode">Mode:</label>
+          <select id="run-mode">
+            <option value="solo">Solo</option>
+            <option value="pairs">Pairs</option>
+          </select>
+          <div id="pair-fields" class="pair-fields hidden">
+            <label for="player-one">Player 1:</label>
+            <input id="player-one" type="text" maxlength="28" placeholder="Player 1 name" />
+            <label for="player-two">Player 2:</label>
+            <input id="player-two" type="text" maxlength="28" placeholder="Player 2 name" />
+          </div>
+          <label for="quality">Quality:</label>
+          <select id="quality">
+            <option value="high">High</option>
+            <option value="balanced">Balanced</option>
+            <option value="chromebook">Chromebook</option>
+          </select>
+          <button id="start-run">Start Graded Run</button>
+          <p id="start-feedback" class="tiny hidden"></p>
+        </div>
+
+        <div id="status" class="status hidden">
+          <p><strong>Mission:</strong> <span id="mission-progress">0 / 8</span></p>
+          <p><strong>Mode:</strong> <span id="mode-state">solo</span></p>
+          <p><strong>Legal State:</strong> <span id="legal-state">YES</span></p>
+          <p><strong>Tax Status:</strong> <span id="tax-state">-</span></p>
+          <p><strong>Repeater:</strong> <span id="repeater-state">-</span></p>
+          <p><strong>Apron:</strong> <span id="apron-state">-</span></p>
+          <p><strong>Total Spend:</strong> <span id="spend-total">-</span></p>
+          <p><strong>Performance:</strong> <span id="perf-score">0</span></p>
+          <p><strong>Flexibility:</strong> <span id="flex-score">0</span></p>
+          <p><strong>Hint Mode:</strong> OFF (Exam)</p>
+        </div>
+
+        <div id="results" class="results hidden"></div>
+      </section>
+
+      <section id="mission-modal" class="modal hidden" aria-live="polite">
+        <div class="modal-card">
+          <h2 id="modal-title"></h2>
+          <p id="modal-brief"></p>
+          <p id="modal-feedback" class="tiny"></p>
+          <div id="modal-options"></div>
+          <button id="modal-close">Close</button>
+        </div>
+      </section>
+
+      <section id="data-panel" class="panel right hidden">
+        <h2>Data Pack (2024-25)</h2>
+        <p class="tiny">Real-data intent. Values marked <code>VERIFY BEFORE USE</code> must be confirmed before live grading.</p>
+        <div id="data-pack"></div>
+      </section>
+
+      <section id="teacher-panel" class="panel right lower hidden">
+        <h2>Teacher Panel</h2>
+        <div id="teacher-summary" class="tiny">Run not finished yet.</div>
+        <button id="reset-attempt">Reset Attempt Lock (Selected Team)</button>
+        <button id="copy-summary">Copy Summary</button>
+      </section>
+
+      <button id="teacher-toggle" class="teacher-toggle">Teacher Panel</button>
+      <div id="interaction-hint" class="interaction-hint hidden">Press E to enter mission zone</div>
+
+      <section id="controls" class="panel bottom">
+        <p><strong>3D controls:</strong> Move with <code>W A S D</code> or arrows, press <code>E</code> near glowing mission zone, drag to rotate camera, scroll to zoom.</p>
+      </section>
+    </div>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>

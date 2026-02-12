@@ -1,0 +1,254 @@
+:root {
+  --bg: #04050a;
+  --panel: rgba(5, 11, 26, 0.84);
+  --panel-border: rgba(141, 200, 255, 0.36);
+  --accent: #52e6bd;
+  --danger: #ff6f83;
+  --text: #f0f4ff;
+  --muted: #adbadf;
+  --glow: 0 0 28px rgba(82, 230, 189, 0.28);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Avenir Next", "Trebuchet MS", "Segoe UI", sans-serif;
+  color: var(--text);
+  background: radial-gradient(circle at 20% 10%, #12264f, #02040b 58%);
+  overflow: hidden;
+}
+
+#app {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+
+#world {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.panel {
+  position: absolute;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 14px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+  padding: 12px 14px;
+}
+
+#hud {
+  left: 14px;
+  top: 14px;
+  width: min(360px, calc(100vw - 28px));
+  box-shadow: var(--glow);
+}
+
+#controls {
+  left: 14px;
+  bottom: 14px;
+  width: min(620px, calc(100vw - 28px));
+}
+
+.right {
+  right: 14px;
+  top: 14px;
+  width: min(42vw, 560px);
+  max-height: calc(100vh - 28px);
+  overflow: auto;
+}
+
+.lower {
+  top: auto;
+  bottom: 14px;
+  max-height: 40vh;
+}
+
+.subtitle {
+  margin-top: 0;
+  color: var(--muted);
+  font-size: 0.94rem;
+}
+
+.team-select {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+label {
+  font-size: 0.84rem;
+  color: var(--muted);
+}
+
+select,
+button,
+input {
+  background: linear-gradient(180deg, #13244c, #0f1a35);
+  color: var(--text);
+  border: 1px solid #3d5fa2;
+  border-radius: 9px;
+  padding: 8px 10px;
+}
+
+button:hover {
+  cursor: pointer;
+  filter: brightness(1.08);
+}
+
+.pair-fields {
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto minmax(120px, 1fr) auto minmax(120px, 1fr);
+  gap: 6px;
+}
+
+.pair-fields input {
+  min-width: 0;
+}
+
+#start-feedback {
+  width: 100%;
+  margin: 4px 0 0;
+}
+
+.status p {
+  margin: 6px 0;
+}
+
+.hidden {
+  display: none;
+}
+
+.modal {
+  position: absolute;
+  inset: 0;
+  background: rgba(3, 5, 12, 0.78);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-card {
+  width: min(92vw, 700px);
+  background: #0a1737;
+  border: 1px solid #4066b6;
+  border-radius: 14px;
+  box-shadow: var(--glow);
+  padding: 18px;
+}
+
+#modal-options {
+  margin: 12px 0;
+  display: grid;
+  gap: 8px;
+}
+
+.option {
+  text-align: left;
+}
+
+.results {
+  margin-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  padding-top: 10px;
+}
+
+.good {
+  color: var(--accent);
+}
+
+.bad {
+  color: var(--danger);
+}
+
+.tiny {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+th,
+td {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 5px 6px;
+  vertical-align: top;
+}
+
+.teacher-toggle {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  z-index: 9;
+}
+
+.interaction-hint {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 86px;
+  z-index: 8;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(110, 255, 211, 0.55);
+  background: rgba(9, 18, 35, 0.86);
+  color: #c9ffea;
+  box-shadow: 0 0 24px rgba(98, 248, 198, 0.28);
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
+}
+
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+@media (max-width: 1000px) {
+  .right {
+    width: calc(100vw - 16px);
+    left: 8px;
+    right: 8px;
+    max-height: 34vh;
+  }
+
+  .lower {
+    bottom: 116px;
+  }
+
+  #hud,
+  #controls {
+    left: 8px;
+    right: 8px;
+    width: calc(100vw - 16px);
+  }
+
+  #controls {
+    bottom: 8px;
+  }
+
+  .teacher-toggle {
+    right: 8px;
+    bottom: 8px;
+  }
+
+  .interaction-hint {
+    bottom: 106px;
+    width: calc(100vw - 30px);
+    text-align: center;
+  }
+
+  .pair-fields {
+    grid-template-columns: 1fr;
+  }
+}
