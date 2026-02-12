@@ -23,6 +23,7 @@ import {
   setInteractionHint,
   setStartFeedback,
   renderTeacherSummary,
+  showQualityNotice,
   showRunState,
   showStartState
 } from "./ui/dom.js";
@@ -42,6 +43,7 @@ let missions = [];
 let runEnded = false;
 let modalLocked = false;
 let hintLoopActive = false;
+let lastDowngradeCount = 0;
 
 function ensureWorld(qualityMode) {
   if (world) return;
@@ -226,8 +228,20 @@ window.addEventListener("keydown", (event) => {
   }
 });
 
+function checkQualityDowngrades() {
+  if (!world) return;
+  const log = world.getDowngradeLog();
+  if (log.length > lastDowngradeCount) {
+    const newest = log[log.length - 1];
+    showQualityNotice(dom, newest);
+    lastDowngradeCount = log.length;
+  }
+}
+
 function updateInteractionHint() {
   if (!hintLoopActive) return;
+
+  checkQualityDowngrades();
 
   if (!world || !runState || runEnded || modalLocked) {
     setInteractionHint(dom, "Press E to enter mission zone", false);

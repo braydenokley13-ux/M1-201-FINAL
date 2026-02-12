@@ -65,7 +65,7 @@
         <div id="results" class="results hidden"></div>
       </section>
 
-      <section id="mission-modal" class="modal hidden" aria-live="polite">
+      <section id="mission-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-live="polite">
         <div class="modal-card">
           <h2 id="modal-title"></h2>
           <p id="modal-brief"></p>
@@ -89,6 +89,7 @@
       </section>
 
       <button id="teacher-toggle" class="teacher-toggle">Teacher Panel</button>
+      <div id="quality-notice" class="quality-notice hidden" role="status" aria-live="polite"></div>
       <div id="interaction-hint" class="interaction-hint hidden">Press E to enter mission zone</div>
 
       <section id="controls" class="panel bottom">
