@@ -37,7 +37,8 @@ export function getDomRefs() {
     teacherToggle: document.getElementById("teacher-toggle"),
     resetAttempt: document.getElementById("reset-attempt"),
     copySummary: document.getElementById("copy-summary"),
-    interactionHint: document.getElementById("interaction-hint")
+    interactionHint: document.getElementById("interaction-hint"),
+    qualityNotice: document.getElementById("quality-notice")
   };
 }
 
@@ -92,7 +93,16 @@ export function renderDataPack(dom, team) {
   `;
 }
 
+let priorFocusElement = null;
+let focusTrapHandler = null;
+
+function getFocusableElements(container) {
+  return [...container.querySelectorAll('button:not([disabled]), [tabindex]:not([tabindex="-1"])')];
+}
+
 export function openChoiceModal(dom, title, brief, options, onChoice, feedback = "") {
+  priorFocusElement = document.activeElement;
+
   dom.modalTitle.textContent = title;
   dom.modalBrief.textContent = brief;
   dom.modalFeedback.textContent = feedback;
@@ -107,10 +117,65 @@ export function openChoiceModal(dom, title, brief, options, onChoice, feedback =
   });
 
   dom.missionModal.classList.remove("hidden");
+  dom.missionModal.setAttribute("role", "dialog");
+  dom.missionModal.setAttribute("aria-modal", "true");
+
+  requestAnimationFrame(() => {
+    const firstFocusable = getFocusableElements(dom.missionModal.querySelector(".modal-card"))[0];
+    if (firstFocusable) firstFocusable.focus();
+  });
+
+  if (focusTrapHandler) {
+    document.removeEventListener("keydown", focusTrapHandler);
+  }
+
+  focusTrapHandler = (e) => {
+    if (dom.missionModal.classList.contains("hidden")) return;
+
+    if (e.key === "Escape") {
+      if (!dom.modalClose.disabled) {
+        e.preventDefault();
+        dom.modalClose.click();
+      }
+      return;
+    }
+
+    if (e.key === "Tab") {
+      const card = dom.missionModal.querySelector(".modal-card");
+      const focusable = getFocusableElements(card);
+      if (focusable.length === 0) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    }
+  };
+  document.addEventListener("keydown", focusTrapHandler);
 }
 
 export function closeModal(dom) {
   dom.missionModal.classList.add("hidden");
+
+  if (focusTrapHandler) {
+    document.removeEventListener("keydown", focusTrapHandler);
+    focusTrapHandler = null;
+  }
+
+  if (priorFocusElement && typeof priorFocusElement.focus === "function") {
+    priorFocusElement.focus();
+    priorFocusElement = null;
+  }
 }
 
 export function showStartState(dom) {
@@ -183,10 +248,20 @@ export function renderTeacherSummary(dom, state, result) {
     : "Not set";
   const perfLine = result.perf_stats ? `FPS:${result.perf_stats.fps} (min ${result.perf_stats.minFps})` : "FPS:Not captured";
 
+  const downgrades = result.perf_stats?.downgradeLog || [];
+  const downgradeLine = downgrades.length
+    ? downgrades.map((d) => `${d.from}->${d.to} @FPS${d.fps} (${new Date(d.timestamp).toLocaleTimeString()})`).join(" || ")
+    : "None";
+
+  const ownershipLine = state.mission_ownership
+    ? Object.entries(state.mission_ownership).map(([m, o]) => `M${m}:${o}`).join(", ")
+    : "N/A";
+
   dom.teacherSummary.textContent = [
     `Team: ${state.team_name}`,
     `Mode: ${state.run_mode}`,
     `Participants: ${participantLine}`,
+    `Ownership: ${ownershipLine}`,
     `Mission Progress: ${state.current_index}/8`,
     `Status: ${result.status}`,
     `Tier: ${result.tier}`,
@@ -197,6 +272,7 @@ export function renderTeacherSummary(dom, state, result) {
     `Flexibility: ${result.flexibility_pass}`,
     `Claim Code: ${result.claim_code || "NONE"}`,
     perfLine,
+    `Quality Downgrades: ${downgradeLine}`,
     `Legal Log: ${state.legal_log.length ? state.legal_log.join(" || ") : "None"}`,
     `Tier Codes: ${claimLegend}`
   ].join("\n");
@@ -234,6 +310,20 @@ export function collectRunSetup(dom) {
   return { mode, participants };
 }
 
+let qualityNoticeTimer = null;
+
+export function showQualityNotice(dom, entry) {
+  if (!dom.qualityNotice) return;
+  const time = new Date(entry.timestamp).toLocaleTimeString();
+  dom.qualityNotice.textContent = `Quality adjusted: ${entry.from} \u2192 ${entry.to} (FPS: ${entry.fps}) at ${time}`;
+  dom.qualityNotice.classList.remove("hidden", "fade-out");
+  clearTimeout(qualityNoticeTimer);
+  qualityNoticeTimer = setTimeout(() => {
+    dom.qualityNotice.classList.add("fade-out");
+    setTimeout(() => dom.qualityNotice.classList.add("hidden"), 500);
+  }, 4000);
+}
+
 export function setStartFeedback(dom, message = "", type = "info") {
   const hasMessage = Boolean(message);
   dom.startFeedback.textContent = message;
@@ -243,4 +333,3 @@ export function setStartFeedback(dom, message = "", type = "info") {
   if (type === "bad") dom.startFeedback.classList.add("bad");
 }
 
-// # TODO(UI-001): Add accessibility pass for keyboard-only mission modal focus trap.

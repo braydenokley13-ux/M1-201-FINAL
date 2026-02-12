@@ -11,6 +11,7 @@ import { attachOptionalModel } from "./assets.js";
 import { createPerfMonitor } from "./perfMonitor.js";
 
 const QUALITY_ORDER = ["high", "balanced", "chromebook"];
+const downgradeLog = [];
 
 function getNextQualityMode(currentMode) {
   const idx = QUALITY_ORDER.indexOf(currentMode);
@@ -371,8 +372,16 @@ export function createWorld(canvas, qualityMode = "high") {
       return;
     }
 
+    const fromMode = activeQualityMode;
     applyQualityMode(nextMode);
-    // # TODO(WORLD-004): Surface downgrade events in HUD/teacher panel with timestamps.
+
+    downgradeLog.push({
+      timestamp: new Date().toISOString(),
+      from: fromMode,
+      to: nextMode,
+      fps: perf.fps,
+      runtimeMs: perf.runtimeMs
+    });
   }
 
   function step() {
@@ -427,8 +436,12 @@ export function createWorld(canvas, qualityMode = "high") {
     getPerfStats() {
       return {
         ...perfMonitor.snapshot(),
-        qualityMode: activeQualityMode
+        qualityMode: activeQualityMode,
+        downgradeLog: [...downgradeLog]
       };
+    },
+    getDowngradeLog() {
+      return [...downgradeLog];
     }
   };
 }

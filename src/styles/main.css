@@ -210,6 +210,27 @@ td {
   letter-spacing: 0.02em;
 }
 
+.quality-notice {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 200, 80, 0.6);
+  background: rgba(9, 18, 35, 0.92);
+  color: #ffd97a;
+  box-shadow: 0 0 18px rgba(255, 200, 80, 0.22);
+  font-size: 0.82rem;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.quality-notice.fade-out {
+  opacity: 0;
+}
+
 code {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
