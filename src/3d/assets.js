@@ -1,8 +1,19 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
+import { KTX2Loader } from "three/addons/loaders/KTX2Loader.js";
 
 const loader = new GLTFLoader();
+const dracoLoader = new DRACOLoader();
+const ktx2Loader = new KTX2Loader();
 const modelCache = new Map();
+let assetPipelineConfigured = false;
+let textureSupportConfigured = false;
+
+dracoLoader.setDecoderPath("https://unpkg.com/three@0.161.0/examples/jsm/libs/draco/");
+ktx2Loader.setTranscoderPath("https://unpkg.com/three@0.161.0/examples/jsm/libs/basis/");
+loader.setDRACOLoader(dracoLoader);
+loader.setKTX2Loader(ktx2Loader);
 
 function setupMeshQuality(root) {
   root.traverse((node) => {
@@ -20,9 +31,30 @@ function setupMeshQuality(root) {
   });
 }
 
+export function configureAssetPipeline(renderer = null) {
+  if (!assetPipelineConfigured) {
+    assetPipelineConfigured = true;
+  }
+
+  if (renderer && !textureSupportConfigured) {
+    ktx2Loader.detectSupport(renderer);
+    textureSupportConfigured = true;
+  }
+}
+
+function cloneCachedModel(cached) {
+  const clone = cached.scene.clone(true);
+  clone.userData = {
+    ...clone.userData,
+    __animations: cached.animations || []
+  };
+  return clone;
+}
+
 export async function loadModelCached(path) {
+  configureAssetPipeline();
   if (modelCache.has(path)) {
-    return modelCache.get(path).clone(true);
+    return cloneCachedModel(modelCache.get(path));
   }
 
   const gltf = await loader.loadAsync(path);
@@ -31,8 +63,11 @@ export async function loadModelCached(path) {
     throw new Error(`No scene found in model: ${path}`);
   }
   setupMeshQuality(scene);
-  modelCache.set(path, scene);
-  return scene.clone(true);
+  modelCache.set(path, {
+    scene,
+    animations: gltf.animations || []
+  });
+  return cloneCachedModel(modelCache.get(path));
 }
 
 export async function attachOptionalModel({
@@ -57,5 +92,3 @@ export async function attachOptionalModel({
     return null;
   }
 }
-
-// # TODO(ASSET-002): Add Draco/KTX2 compressed pipeline when external assets are finalized.

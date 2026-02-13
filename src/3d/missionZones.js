@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { attachOptionalModel } from "./assets.js";
+import { ASSET_CALIBRATION, MISSION_THEME_BY_INDEX } from "./assetCalibration.js";
 
 export const MISSION_ZONE_POSITIONS = [
   new THREE.Vector3(-18, 0, -18),
@@ -20,9 +21,10 @@ export function createMissionZones(scene) {
 
   MISSION_ZONE_POSITIONS.forEach((pos, idx) => {
     const group = new THREE.Group();
+    const theme = MISSION_THEME_BY_INDEX[idx % MISSION_THEME_BY_INDEX.length];
 
     const padMat = new THREE.MeshStandardMaterial({
-      color: new THREE.Color().setHSL(0.42 + idx * 0.02, 0.7, 0.42),
+      color: theme.pad,
       metalness: 0.2,
       roughness: 0.35,
       emissive: new THREE.Color(0x0f2342),
@@ -30,10 +32,10 @@ export function createMissionZones(scene) {
     });
 
     const ringMat = new THREE.MeshStandardMaterial({
-      color: 0x8effda,
+      color: theme.ring,
       metalness: 0.25,
       roughness: 0.28,
-      emissive: 0x59f4be,
+      emissive: theme.emissive,
       emissiveIntensity: 0.72
     });
 
@@ -49,8 +51,8 @@ export function createMissionZones(scene) {
     const beacon = new THREE.Mesh(
       new THREE.CylinderGeometry(0.12, 0.12, 3.8, 8),
       new THREE.MeshStandardMaterial({
-        color: 0xbdefff,
-        emissive: 0x79d8ff,
+        color: theme.beacon,
+        emissive: theme.emissive,
         emissiveIntensity: 0.58,
         metalness: 0.1,
         roughness: 0.2
@@ -75,8 +77,8 @@ export function createMissionZones(scene) {
       parent: group,
       fallback: beacon,
       transform(model) {
-        model.position.set(0, 0.45, 0);
-        model.scale.setScalar(0.9);
+        model.position.copy(ASSET_CALIBRATION.mission_kiosk.position);
+        model.scale.setScalar(ASSET_CALIBRATION.mission_kiosk.scale);
       }
     });
   });
@@ -126,5 +128,3 @@ function createMissionLabelSprite(text) {
   const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false });
   return new THREE.Sprite(mat);
 }
-
-// # TODO(ZONE-001): Add unique kiosk skins per mission theme.

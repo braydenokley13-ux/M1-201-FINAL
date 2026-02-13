@@ -14,6 +14,6 @@ for (const file of files) {
   execSync(`node --check ${file}`, { stdio: "inherit" });
 }
 
-console.log("Syntax check passed.");
+execSync("node scripts/schema-check.mjs", { stdio: "inherit" });
 
-// # TODO(QA-001): Expand this script to validate JSON schemas for mission/event data.
+console.log("Syntax + schema checks passed.");

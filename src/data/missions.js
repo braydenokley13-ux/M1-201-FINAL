@@ -9,7 +9,13 @@ export const MISSIONS = [
         id: "conservative-audit",
         label: "Audit and waive non-rotation partial guarantee",
         effects: { payroll_delta: -1200000, performance_delta: 0, flexibility_delta: 2 },
-        rule_checks: []
+        rule_checks: [],
+        transaction: {
+          type: "trade_exception_create",
+          trade_exception_id: "EX-M1-AUDIT",
+          trade_exception_create_amount: 1200000,
+          expires_after_year: 2026
+        }
       },
       {
         id: "keep-all",
@@ -107,7 +113,14 @@ export const MISSIONS = [
         id: "trim-contract",
         label: "Trade down to trim salary",
         effects: { payroll_delta: -5400000, performance_delta: -2, flexibility_delta: 5 },
-        rule_checks: []
+        rule_checks: [
+          { type: "requires_cash_trade_budget", value: 1200000 },
+          { type: "blocked_cash_trade_if_second_apron", reason: "Second Apron teams cannot send cash in trades." }
+        ],
+        transaction: {
+          type: "cash_trade",
+          cash_sent: 1200000
+        }
       }
     ]
   },
@@ -121,13 +134,29 @@ export const MISSIONS = [
         id: "aggregate-trade",
         label: "Aggregate two salaries to chase one higher salary player",
         effects: { payroll_delta: 3000000, performance_delta: 5, flexibility_delta: -4 },
-        rule_checks: [{ type: "blocked_if_second_apron", reason: "Second Apron teams cannot aggregate outgoing salaries in this simulation." }]
+        rule_checks: [
+          { type: "blocked_if_second_apron", reason: "Second Apron teams cannot aggregate outgoing salaries in this simulation." },
+          { type: "requires_not_second_apron_for_sign_and_trade", reason: "Sign-and-trade incoming is blocked at the Second Apron." }
+        ],
+        transaction: {
+          type: "sign_and_trade_incoming",
+          incoming_salary: 16500000,
+          outgoing_salary: 13500000
+        }
       },
       {
         id: "small-trade",
         label: "Execute one-for-one legal salary match move",
         effects: { payroll_delta: 800000, performance_delta: 2, flexibility_delta: 0 },
-        rule_checks: []
+        rule_checks: [],
+        transaction: {
+          type: "trade_exception_use",
+          trade_exception_id_by_team: {
+            warriors: "EX-WAR-01",
+            knicks: "EX-KNY-01"
+          },
+          trade_exception_use_amount: 2400000
+        }
       },
       {
         id: "no-trade",
@@ -167,7 +196,12 @@ export const MISSIONS = [
         id: "all-in",
         label: "Final aggressive add",
         effects: { payroll_delta: 6800000, performance_delta: 5, flexibility_delta: -5 },
-        rule_checks: [{ type: "blocked_if_frozen_pick", reason: "Future pick freeze risk blocks this route at critical flexibility." }]
+        rule_checks: [{ type: "blocked_if_frozen_pick", reason: "Future pick freeze risk blocks this route at critical flexibility." }],
+        transaction: {
+          type: "trade",
+          uses_future_pick: true,
+          pick_year: 2032
+        }
       },
       {
         id: "balanced-close",

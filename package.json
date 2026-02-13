@@ -8,7 +8,9 @@
     "build": "vite build",
     "preview": "vite preview",
     "check:syntax": "node scripts/syntax-check.mjs",
-    "check:todos": "node scripts/todo-audit.mjs"
+    "check:schemas": "node scripts/schema-check.mjs",
+    "check:todos": "node scripts/todo-audit.mjs",
+    "check:ci": "npm run check:syntax && npm run check:todos && npm run build"
   },
   "dependencies": {
     "three": "^0.161.0"

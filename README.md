@@ -12,7 +12,14 @@ This is a high-quality 3D skeleton for **Track 201 Module 1** only.
 - Multi-check pass/fail model
 - Shared tier claim codes (permanent, non-hash)
 - Solo + pairs setup mode hooks
-- Teacher reset hook for attempt-lock flow
+- Pair-mode mission ownership notes (Player 1 / Player 2 attribution)
+- Auto quality downgrade notices in HUD + teacher summary history
+- Keyboard-accessible mission modal focus trap
+- Teacher reset hook for attempt-lock flow + per-team audit log
+- Teacher strict-lock toggle (ON/OFF) persisted with audit history
+- Attempt-lock storage fallback chain for restricted/private browsers
+- Signed server verification path for attempt lock (`/api/attempt-lock`)
+- Production build chunk split (`vendor-three`) for cleaner deploy output
 - Minimal teacher panel summary
 - Data panel with `VERIFY BEFORE USE` markers
 
@@ -31,6 +38,20 @@ This is a high-quality 3D skeleton for **Track 201 Module 1** only.
 1. Syntax: `npm run check:syntax`
 2. TODO audit: `npm run check:todos`
 
+## Server lock setup (exam integrity)
+1. Set `VITE_ATTEMPT_LOCK_SERVER_MODE=required` in production.
+2. Set `VITE_ATTEMPT_LOCK_API_URL=/api/attempt-lock`.
+3. Configure client verify keys using one of:
+   - `VITE_ATTEMPT_LOCK_VERIFY_PUBLIC_KEY_PEM` (+ optional `VITE_ATTEMPT_LOCK_VERIFY_PUBLIC_KEY_ID`)
+   - `VITE_ATTEMPT_LOCK_VERIFY_PUBLIC_KEYS_JSON` for key rotation (keyId -> PEM map).
+4. Configure server signing keys using one of:
+   - `ATTEMPT_LOCK_PRIVATE_KEY_PEM` + `ATTEMPT_LOCK_KEY_ID`
+   - `ATTEMPT_LOCK_PRIVATE_KEYS_JSON` + `ATTEMPT_LOCK_ACTIVE_KEY_ID` for rotation.
+5. Configure durable storage:
+   - `KV_REST_API_URL` + `KV_REST_API_TOKEN` (or `ATTEMPT_LOCK_REDIS_REST_URL` + `ATTEMPT_LOCK_REDIS_REST_TOKEN`)
+   - `ATTEMPT_LOCK_DURABLE_REQUIRED=true`
+6. Keep `VITE_ATTEMPT_LOCK_ALLOW_UNSIGNED_DEV=false` in production.
+
 ## Controls
 - Move: `W A S D` or arrow keys
 - Mission interaction: `E`
@@ -48,5 +69,5 @@ Place these in `/assets`:
 - Tier 3 ELITE: `T3-M1-201-ELITE`
 
 ## Important
-- `# TODO` markers are intentionally included in code for future implementation passes.
-- Search with: `rg -n "# TODO" src scripts README.md DEPLOY.md TODO_TRACKER.md assets/README.md`
+- Run `npm run check:ci` before every release.
+- Keep claim-code, class-profile, and attempt-lock settings aligned between local and production.

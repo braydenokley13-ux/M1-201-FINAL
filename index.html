@@ -23,6 +23,8 @@
         <p class="subtitle">District A Final - Cap Control Ops (Module 1)</p>
 
         <div id="team-select" class="team-select">
+          <label for="class-profile">Class:</label>
+          <select id="class-profile"></select>
           <label for="team">Choose Team:</label>
           <select id="team">
             <option value="warriors">Golden State Warriors</option>
@@ -52,6 +54,7 @@
         <div id="status" class="status hidden">
           <p><strong>Mission:</strong> <span id="mission-progress">0 / 8</span></p>
           <p><strong>Mode:</strong> <span id="mode-state">solo</span></p>
+          <p><strong>Quality:</strong> <span id="quality-state">high</span></p>
           <p><strong>Legal State:</strong> <span id="legal-state">YES</span></p>
           <p><strong>Tax Status:</strong> <span id="tax-state">-</span></p>
           <p><strong>Repeater:</strong> <span id="repeater-state">-</span></p>
@@ -59,17 +62,19 @@
           <p><strong>Total Spend:</strong> <span id="spend-total">-</span></p>
           <p><strong>Performance:</strong> <span id="perf-score">0</span></p>
           <p><strong>Flexibility:</strong> <span id="flex-score">0</span></p>
+          <p id="quality-notice" class="tiny hidden"></p>
           <p><strong>Hint Mode:</strong> OFF (Exam)</p>
         </div>
 
         <div id="results" class="results hidden"></div>
       </section>
 
-      <section id="mission-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-live="polite">
+      <section id="mission-modal" class="modal hidden" aria-live="polite">
         <div class="modal-card">
           <h2 id="modal-title"></h2>
           <p id="modal-brief"></p>
           <p id="modal-feedback" class="tiny"></p>
+          <div id="modal-context"></div>
           <div id="modal-options"></div>
           <button id="modal-close">Close</button>
         </div>
@@ -83,13 +88,34 @@
 
       <section id="teacher-panel" class="panel right lower hidden">
         <h2>Teacher Panel</h2>
+        <label for="strict-lock-toggle" class="tiny">
+          <input id="strict-lock-toggle" type="checkbox" />
+          Strict one-attempt exam lock
+        </label>
+        <p id="strict-lock-state" class="tiny">Strict lock mode: OFF</p>
         <div id="teacher-summary" class="tiny">Run not finished yet.</div>
+        <div class="claim-editor">
+          <h3>Claim Codes by Class</h3>
+          <label for="teacher-class-profile">Class Profile:</label>
+          <select id="teacher-class-profile"></select>
+          <label for="code-tier-1">Tier 1 (CLEAR)</label>
+          <input id="code-tier-1" type="text" maxlength="40" />
+          <label for="code-tier-2">Tier 2 (STRONG)</label>
+          <input id="code-tier-2" type="text" maxlength="40" />
+          <label for="code-tier-3">Tier 3 (ELITE)</label>
+          <input id="code-tier-3" type="text" maxlength="40" />
+          <div class="claim-editor-actions">
+            <button id="save-claim-codes">Save Claim Codes</button>
+            <button id="reset-claim-codes">Reset to Default</button>
+          </div>
+          <p id="claim-code-feedback" class="tiny hidden"></p>
+        </div>
+        <div id="teacher-audit" class="tiny audit-log">Attempt audit will appear here.</div>
         <button id="reset-attempt">Reset Attempt Lock (Selected Team)</button>
         <button id="copy-summary">Copy Summary</button>
       </section>
 
       <button id="teacher-toggle" class="teacher-toggle">Teacher Panel</button>
-      <div id="quality-notice" class="quality-notice hidden" role="status" aria-live="polite"></div>
       <div id="interaction-hint" class="interaction-hint hidden">Press E to enter mission zone</div>
 
       <section id="controls" class="panel bottom">

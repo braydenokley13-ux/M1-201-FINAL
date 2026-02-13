@@ -7,8 +7,9 @@ import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js"
 import { QUALITY_PRESETS, WORLD_ADAPTIVE_QUALITY } from "../config/gameConfig.js";
 import { createMissionZones, setMissionZoneActive } from "./missionZones.js";
 import { createAvatar, createMoveInput, stepAvatar } from "./avatarController.js";
-import { attachOptionalModel } from "./assets.js";
+import { attachOptionalModel, configureAssetPipeline } from "./assets.js";
 import { createPerfMonitor } from "./perfMonitor.js";
+import { ASSET_CALIBRATION } from "./assetCalibration.js";
 
 const QUALITY_ORDER = ["high", "balanced", "chromebook"];
 const downgradeLog = [];
@@ -158,8 +159,8 @@ function addArena(scene) {
     parent: scene,
     fallback: fallbackArena,
     transform(model) {
-      model.position.set(0, 0.12, 0);
-      model.scale.setScalar(2.35);
+      model.position.copy(ASSET_CALIBRATION.arena_main.position);
+      model.scale.setScalar(ASSET_CALIBRATION.arena_main.scale);
     }
   });
 }
@@ -222,7 +223,7 @@ function addCityProps(scene, density) {
       transform(model) {
         model.position.copy(spot);
         model.rotation.y = idx * (Math.PI / 2);
-        model.scale.setScalar(1.5);
+        model.scale.setScalar(ASSET_CALIBRATION.city_tower_set.scale);
       }
     });
   });
@@ -254,6 +255,7 @@ export function createWorld(canvas, qualityMode = "high") {
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  configureAssetPipeline(renderer);
 
   const scene = new THREE.Scene();
 
@@ -426,6 +428,9 @@ export function createWorld(canvas, qualityMode = "high") {
   return {
     avatar,
     missionZones,
+    setQualityMode(mode) {
+      applyQualityMode(mode);
+    },
     setActiveMission(index) {
       setMissionZoneActive(missionZones, index);
     },

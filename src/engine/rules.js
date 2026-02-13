@@ -1,5 +1,5 @@
 import { THRESHOLDS_2024_25 } from "../data/teams.js";
-import { CLAIM_CODES_BY_TIER } from "../config/claimCodes.js";
+import { resolveClaimCodeForTier } from "../config/claimCodes.js";
 import { evaluateAdvancedCbaRules } from "./cbaStrict.js";
 
 export function updateStatuses(state) {
@@ -14,9 +14,9 @@ export function updateStatuses(state) {
     state.apron_status = "Below Apron";
   }
 
-  // # TODO(RULE-001): Replace simplified spend guardrail logic with teacher-configurable scenario rules.
-  if (state.repeater_status === "YES" && state.tax_status === "Over Tax") {
-    state.spend_guardrail = Math.min(state.spend_guardrail, THRESHOLDS_2024_25.second_apron + 245000000);
+  const repeaterCap = state.scenario_rules?.repeater_over_tax_guardrail_cap_by_team?.[state.team_id];
+  if (state.repeater_status === "YES" && state.tax_status === "Over Tax" && Number.isFinite(repeaterCap)) {
+    state.spend_guardrail = Math.min(state.spend_guardrail, repeaterCap);
   }
 
   return state;
@@ -50,7 +50,20 @@ export function evaluateRuleChecks(state, option) {
       }
     }
 
-    // # TODO(RULE-002): Add explicit sign-and-trade and cash-in-trade restrictions per CBA article refs.
+    if (check.type === "requires_not_second_apron_for_sign_and_trade" && state.apron_status === "Second Apron") {
+      return { legal: false, reason: check.reason || "Sign-and-trade incoming is blocked at the Second Apron." };
+    }
+
+    if (check.type === "blocked_cash_trade_if_second_apron" && state.apron_status === "Second Apron") {
+      return { legal: false, reason: check.reason || "Cash-in-trade is blocked at the Second Apron." };
+    }
+
+    if (check.type === "requires_cash_trade_budget") {
+      const needed = Number(check.value) || 0;
+      if ((state.cash_trade_budget_remaining || 0) < needed) {
+        return { legal: false, reason: `Need at least $${needed.toLocaleString()} cash-trade budget remaining.` };
+      }
+    }
   }
 
   const advanced = evaluateAdvancedCbaRules(state, option);
@@ -146,7 +159,7 @@ export function evaluateRun(state) {
   };
 }
 
-export function buildClaimCode(tier, passed) {
+export function buildClaimCode(tier, passed, classProfileId = "default") {
   if (!passed) return "";
-  return CLAIM_CODES_BY_TIER[tier] || "";
+  return resolveClaimCodeForTier(tier, classProfileId);
 }

@@ -42,4 +42,45 @@ export const GAME_RULES = {
   enforceSingleAttemptLock: false
 };
 
-// # TODO(CONFIG-001): Add per-class profile loading (teacher chooses defaults once).
+export const SCENARIO_RULESETS = {
+  default: {
+    id: "default",
+    label: "Baseline Exam",
+    spend_guardrail_by_team: {
+      warriors: 435000000,
+      knicks: 365000000
+    },
+    repeater_over_tax_guardrail_cap_by_team: {
+      warriors: 433931000,
+      knicks: 398000000
+    }
+  },
+  "period-1": {
+    id: "period-1",
+    label: "Period 1",
+    spend_guardrail_by_team: {
+      warriors: 432000000,
+      knicks: 362000000
+    },
+    repeater_over_tax_guardrail_cap_by_team: {
+      warriors: 431000000,
+      knicks: 395000000
+    }
+  },
+  "period-2": {
+    id: "period-2",
+    label: "Period 2",
+    spend_guardrail_by_team: {
+      warriors: 438000000,
+      knicks: 368000000
+    },
+    repeater_over_tax_guardrail_cap_by_team: {
+      warriors: 436000000,
+      knicks: 401000000
+    }
+  }
+};
+
+export function getScenarioRules(scenarioId = "default") {
+  return SCENARIO_RULESETS[scenarioId] || SCENARIO_RULESETS.default;
+}

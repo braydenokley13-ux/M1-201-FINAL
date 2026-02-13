@@ -20,6 +20,21 @@ export const TEAMS = {
     exceptions_available: ["Bird Rights", "Veteran Minimum"],
     performance_score: 62,
     flexibility_score: 32,
+    current_season_year: 2025,
+    cash_trade_budget_remaining: 5500000,
+    second_apron_history: [2023, 2024],
+    future_pick_status: {
+      2032: "at_risk",
+      2033: "available"
+    },
+    trade_exceptions: [
+      {
+        id: "EX-WAR-01",
+        amount: 6300000,
+        expires_after_year: 2026,
+        source: "Prior-season salary dump"
+      }
+    ],
     source: "https://www.spotrac.com/nba/golden-state-warriors/cap/_/year/2024",
     verified_date: "2026-02-12",
     players: [
@@ -63,6 +78,21 @@ export const TEAMS = {
     exceptions_available: ["Bird Rights", "Taxpayer MLE", "Veteran Minimum"],
     performance_score: 67,
     flexibility_score: 49,
+    current_season_year: 2025,
+    cash_trade_budget_remaining: 6700000,
+    second_apron_history: [2024],
+    future_pick_status: {
+      2032: "available",
+      2033: "available"
+    },
+    trade_exceptions: [
+      {
+        id: "EX-KNY-01",
+        amount: 7200000,
+        expires_after_year: 2026,
+        source: "Bench-contract trade exception"
+      }
+    ],
     source: "https://www.spotrac.com/nba/new-york-knicks/cap/_/year/2024",
     verified_date: "2026-02-12",
     players: [
